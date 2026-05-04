@@ -1,0 +1,57 @@
+#!/bin/bash
+
+MUSIC_DIR="$HOME/musica"
+SOCKET="/tmp/mpvsocket"
+
+mpv_cmd() {
+    echo '{ "command": '"$1"' }' | socat - "$SOCKET" > /dev/null 2>&1
+}
+
+trap "pkill mpv; rm -f $SOCKET; stty echo; tput cnorm; clear; exit" INT TERM
+
+while true; do
+    FILE=$(find "$MUSIC_DIR" -type f \( -iname "*.mp3" -o -iname "*.flac" -o -iname "*.wav" \) | \
+          fzf --header="Selecciona con Enter | ESC para salir del script" --layout=reverse --cycle)
+
+    [ -z "$FILE" ] && break
+
+    mpv --no-video --idle --input-ipc-server="$SOCKET" \
+        --input-default-bindings=no --no-terminal "$FILE" &
+    MPV_PID=$!
+
+    stty -echo
+    tput civis
+
+    clear
+    echo "🎵 Reproduciendo: $(basename "$FILE")"
+    echo "----------------------------------------------------------"
+    echo " [ESPACIO] Pausa | [→] +5s | [←] -5s | [Q] Volver al menú"
+    echo "----------------------------------------------------------"
+
+    while true; do
+        read -rsn1 key
+        case "$key" in
+            $'\e') 
+                read -rsn2 -t 0.1 next_chars
+                case "$next_chars" in
+                    "[C") mpv_cmd '["seek", 5]' ;;
+                    "[D") mpv_cmd '["seek", -5]' ;;
+                esac
+                ;;
+            " " | "") 
+                mpv_cmd '["cycle", "pause"]'
+                ;;
+            "q" | "Q") 
+                kill $MPV_PID 2>/dev/null
+                break 
+                ;;
+        esac
+    done
+
+    stty echo
+    tput cnorm
+    rm -f "$SOCKET"
+done
+
+clear
+
