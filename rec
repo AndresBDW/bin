@@ -1,0 +1,3 @@
+#!/bin/sh
+
+wf-recorder -a -f ~/videos/capturas/video-$(date +%Y-%m-%d_%H-%M-%S).mp4
