@@ -1,0 +1,6 @@
+#!/bin/sh
+
+[ "$1" ] || exit 1
+
+cp "$1" /home/diego/.wine/drive_c/users/diego/AppData/Local/GeometryDash/geode/mods/eclipse.eclipse-menu/replays/
+cp "$1" /home/diego/juegos/gd/macros/

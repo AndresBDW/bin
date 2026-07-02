@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+log() {
+    printf '\033[32m->\033[m %s.\n' "$*"
+}
+
+err() {
+    log "$*" >&2
+    exit 1
+}
+
+main() {
+	if [ -z "$1" ]; then
+	    log " Uso: perf [max | perf | balanced | save | status]"
+	    log "  max      -> performance"
+	    log "  perf     -> balance performance"
+	    log "  balanced -> balance power"
+	    log "  save     -> power"
+	    log "  status   -> show status"
+	    exit 1
+	fi
+
+	case "$1" in
+	    max)      GOV="performance" ;;
+	    perf)     GOV="balance_performance" ;;
+	    balanced) GOV="balance_power" ;;
+	    save)     GOV="power" ;;
+	    status)
+	        CURRENT=$(cat /sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference)
+	        log current profile: $CURRENT
+	        exit 0
+	        ;;
+	    *)
+	        err not a valid parameter
+	        ;;
+	esac
+	echo "$GOV" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
+	log cpu profile: $GOV
+}
+
+main "$@"
