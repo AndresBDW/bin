@@ -1,4 +1,7 @@
 #!/bin/bash
+# 
+# okwal - pywal wrapper to use okpal as backend for
+#         applying the palettes
 
 WAL_COLORS="$HOME/.cache/wal/colors"
 PALETTE_DIR="$HOME/.config/okpal/palettes/dark"
@@ -15,24 +18,19 @@ err() {
 
 set_wallpaper() {
     local input_file="${1:-$HOME/imagenes/wallpaper.jpg}"
-    
     if [[ ! -f "$input_file" ]]; then
         input_file=$(ls "$HOME"/imagenes/wallpaper.{jpg,png} 2>/dev/null | head -n 1)
         [[ -z "$input_file" ]] && err "no wallpaper found"
     fi
-    
     export WAL="$input_file"
     log "using wallpaper: $WAL"
-    
     wal -i "$WAL" >/dev/null 2>&1 || err "failed to run 'wal'"
 }
 
 generate_palette() {
     [[ -f "$WAL_COLORS" ]] || err "colors file not found at $WAL_COLORS"
     mkdir -p "$PALETTE_DIR" || err "failed to create directory $PALETTE_DIR"
-
     mapfile -t colors < <(sed 's/#//' "$WAL_COLORS")
-
     cat <<EOF > "$TARGET"
 background=${colors[0]}
 foreground=${colors[7]}
@@ -58,11 +56,10 @@ EOF
 
 main() {
     log "starting wal to okpal conversion..."
-    
     set_wallpaper "$1"
     generate_palette
-    
     log "palette successfully generated at $TARGET"
+    okpal -s wal
     rm -rf $HOME/.cache/wal/schemes
 }
 
