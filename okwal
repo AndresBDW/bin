@@ -24,7 +24,7 @@ set_wallpaper() {
     fi
     export WAL="$input_file"
     log "using wallpaper: $WAL"
-    wal -i "$WAL" >/dev/null 2>&1 || err "failed to run 'wal'"
+    wal -i "$WAL" >/dev/null 2>&1
 }
 
 generate_palette() {
@@ -55,12 +55,14 @@ EOF
 }
 
 main() {
-    log "starting wal to okpal conversion..."
-    set_wallpaper "$1"
-    generate_palette
-    log "palette successfully generated at $TARGET"
-    okpal -s wal
-    rm -rf $HOME/.cache/wal/schemes
+	okpal || err okpal not found
+	pywal || err pywal not found
+        log "starting wal to okpal conversion..."
+        set_wallpaper "$1"
+        generate_palette
+        log "palette successfully generated at $TARGET"
+        okpal -s wal >/dev/null 2>&1
+        rm -rf $HOME/.cache/wal/schemes
 }
 
 main "$@"
