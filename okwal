@@ -63,6 +63,7 @@ main() {
     generate_palette
     
     log "palette successfully generated at $TARGET"
+    rm -rf $HOME/.cache/wal/schemes
 }
 
 main "$@"
