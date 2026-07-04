@@ -1,7 +1,0 @@
-#!/bin/sh
-
-[ "$1" ] || { printf "Usage: temp (file)\n"; exit 1; }
-
-printf -- "---\nUploading file, wait the link is generated.\nLink: "
-curl -F "file=@$1" https://temp.sh/upload
-printf -- "\n---\n"
