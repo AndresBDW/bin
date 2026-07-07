@@ -1,0 +1,22 @@
+#!/bin/bash
+
+full() {
+	grim -t png -c - | tee /home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png | wl-copy
+}
+
+geometry() {
+	grim -g "$(slurp)" -t png -c - | tee /home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png | wl-copy
+}
+
+main() {
+	if [ "$1" == "full" ]; then
+		full
+	elif [ "$1" == "geometry" ]; then
+		geometry
+	else
+		printf '\033[32m->\033[m no valid parameter.\n' >&2
+		exit 1
+	fi
+}
+
+main "$1"
