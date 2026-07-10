@@ -16,6 +16,14 @@ err() {
     exit 1
 }
 
+check_dependencies() {
+    for cmd in wal okpal; do
+        if ! command -v "$cmd" >/dev/null 2>&1; then
+            err "dependency '$cmd' not found. Please install it"
+        fi
+    done
+}
+
 set_wallpaper() {
     local input_file="${1:-$HOME/imagenes/wallpaper.jpg}"
     if [[ ! -f "$input_file" ]]; then
@@ -55,8 +63,7 @@ EOF
 }
 
 main() {
-	okpal || err okpal not found
-	pywal || err pywal not found
+	check_dependencies
         log "starting wal to okpal conversion..."
         set_wallpaper "$1"
         generate_palette

@@ -10,6 +10,7 @@ err() {
 }
 
 main() {
+	[ "$(id -u)" = 0 ] || err Script needs to be run as root
 	if [ -z "$1" ]; then
 	    log " Uso: perf [max | perf | balanced | save | status]"
 	    log "  max      -> performance"
@@ -34,7 +35,7 @@ main() {
 	        err not a valid parameter
 	        ;;
 	esac
-	echo "$GOV" | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
+	echo "$GOV" | tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
 	log cpu profile: $GOV
 }
 
