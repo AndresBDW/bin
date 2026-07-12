@@ -1,11 +1,13 @@
 #!/bin/bash
 
 full() {
-	grim -t png -c - | tee /home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png | wl-copy
+	maim "/home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png"
+	xclip -selection clipboard -t image/png "/home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png"
 }
 
 geometry() {
-	grim -g "$(slurp)" -t png -c - | tee /home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png | wl-copy
+	maim -s "/home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png"
+	xclip -selection clipboard -t image/png "/home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png"
 }
 
 main() {
