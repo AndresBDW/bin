@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd ~/juegos/gd/
+WINEDLLOVERRIDES="xinput1_4=n,b" wine GeometryDash.exe 
