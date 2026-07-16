@@ -1,6 +1,8 @@
-#!/bin/sh
+#!/bin/sh -e
 
-capacity="$(cat /sys/class/power_supply/BAT0/capacity)"
-status="$(cat /sys/class/power_supply/BAT0/status)"
+bat_dir=/sys/class/power_supply/BAT0
 
-printf "$capacity%s ($status)\n" %
+read -r capacity < "$bat_dir/capacity"
+read -r status   < "$bat_dir/status"
+
+printf '%s%% [%s]\n' "$capacity" "$status"
