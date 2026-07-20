@@ -2,5 +2,5 @@
 
 [ "$1" ] || exit 1
 
-printf '#!/bin/bash\n\n\n' > "$1" && chmod +x "$1"
+printf '#!/bin/sh\n\n\n' > "$1" && chmod +x "$1"
 $EDITOR $1
