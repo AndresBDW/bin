@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ -n "$1" ];  then
+	cp /boot/efi/vmlinuz /boot/efi/vmlinuz.old 2>/dev/null
+	cp /boot/"$1"  /boot/efi/vmlinuz 2>/dev/null
+fi
+
+efibootmgr -b 0000 -B 2>/dev/null 
+efibootmgr -b 0001 -B 2>/dev/null
+
+efibootmgr --create \
+           --disk /dev/nvme0n1 \
+           --part 1 \
+           --label "KISSLINUXOLD" \
+           --loader "\\vmlinuz.old" \
+           --unicode "root=/dev/nvme0n1p3 ro loglevel=3 quiet"
+
+efibootmgr --create \
+           --disk /dev/nvme0n1 \
+           --part 1 \
+           --label "KISSLINUX" \
+           --loader "\\vmlinuz" \
+           --unicode "root=/dev/nvme0n1p3 ro loglevel=3 quiet"

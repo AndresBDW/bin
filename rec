@@ -1,8 +1,0 @@
-#!/bin/sh
-if pgrep -x "gpu-screen-reco" >/dev/null; then
-    notify-send -i "/home/diego/imagenes/xorg.svg"  "///" "Record Stopped" 
-    pkill -x gpu-screen-reco
-else
-    notify-send -i "/home/diego/imagenes/xorg.svg"  "///" "Record Started"
-    gpu-screen-recorder -w screen -f 180 -a default_output -o /home/diego/videos/capturas/"$(date +%Y-%m-%d_%H-%M-%S)".mp4
-fi

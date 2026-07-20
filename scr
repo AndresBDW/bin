@@ -1,30 +1,21 @@
 #!/bin/bash
 
-# Directorio de guardado (puedes usar una variable para cambiarlo fácil)
-DIR="/home/diego/imagenes/capturas"
-FILE="$DIR/screenshot-$(date +%Y%m%d-%H%M%S).png"
-ICON="/home/diego/imagenes/xorg.svg"
-
-capture() {
-    # $1 contiene los argumentos extra para maim (ej: -s)
-    maim $1 "$FILE"
-    
-    # Copiar al clipboard
-    xclip -selection clipboard -t image/png "$FILE"
-    
-    # Notificación
-    notify-send -i "$ICON" "///" "Screenshot saved"
+full() {
+	grim -t png -c - | tee /home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png | wl-copy -t image/png
 }
 
-case "$1" in
-    full)
-        capture ""
-        ;;
-    geometry)
-        capture "-s"
-        ;;
-    *)
-        printf '\033[32m->\033[m no valid parameter.\n' >&2
-        exit 1
-        ;;
-esac
+geometry() {
+	grim -g "$(slurp)" -t png -c - | tee /home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png | wl-copy -t image/png
+}
+
+main() {
+	if [ "$1" == full ]; then
+		full
+	elif [ "$1" == geometry ]; then
+		geometry
+	else
+		printf "use: scr <full|geometry>\n"
+	fi
+}
+
+main "$1"

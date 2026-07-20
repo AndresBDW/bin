@@ -1,3 +1,0 @@
-#!/bin/sh
-
-gamescope -w 1920 -h 1080 -b -- wine ~/juegos/gtasa/gta_sa.exe

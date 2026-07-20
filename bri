@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# bri - brightness control util
+
+path="/sys/class/backlight/amdgpu_bl0/brightness"
+max=$(cat /sys/class/backlight/amdgpu_bl0/max_brightness)
+cur=$(cat "$path")
+step=$((max / 20))
+
+case "$1" in
+	+) new=$((cur + step)) ;;
+	-) new=$((cur - step)) ;;
+	*) new=$1 ;;
+esac
+
+[ "$new" -gt "$max" ] && new=$max
+[ "$new" -lt 0 ]      && new=0
+
+echo "$new" > "$path"
