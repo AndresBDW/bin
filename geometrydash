@@ -1,0 +1,3 @@
+#!/bin/sh
+
+WINEDLLOVERRIDES="xinput1_4=n,b" conty wine /home/diego/.local/share/juegos/geometrydash/GeometryDash.exe
