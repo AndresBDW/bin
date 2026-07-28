@@ -1,0 +1,3 @@
+#!/bin/sh
+
+conty.sh wine ~/.local/share/juegos/gtasa/Normal.bat

@@ -1,11 +1,16 @@
-#!/bin/bash
+#!/bin/sh
+
+SCR="/home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png"
+SCU="/home/diego/imagenes/capturas/current.png"
 
 full() {
-	grim -t png -c - | tee /home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png | wl-copy -t image/png
+	grim -t png -c - | tee $SCR | wl-copy -t image/png
+	cp $SCR $SCU
 }
 
 geometry() {
-	grim -g "$(slurp)" -t png -c - | tee /home/diego/imagenes/capturas/screenshot-$(date +%Y%m%d-%H%M%S).png | wl-copy -t image/png
+	grim -g "$(slurp)" -t png -c - | tee $SCR | wl-copy -t image/png
+	cp $SCR $SCU
 }
 
 main() {
