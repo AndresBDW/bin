@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+#
+# amdperf - script to changes amd cpu mode
 
 log() {
     printf '\033[32m->\033[m %s.\n' "$*"
@@ -10,9 +12,8 @@ err() {
 }
 
 main() {
-	[ "$(id -u)" = 0 ] || err Script needs to be run as root
 	if [ -z "$1" ]; then
-	    log " Uso: perf [max | perf | balanced | save | status]"
+	    log " use: perf [max | perf | balanced | save | status]"
 	    log "  max      -> performance"
 	    log "  perf     -> balance performance"
 	    log "  balanced -> balance power"
@@ -35,6 +36,7 @@ main() {
 	        err not a valid parameter
 	        ;;
 	esac
+	[ "$(id -u)" = 0 ] || err script needs to be run as root
 	echo "$GOV" | tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference > /dev/null
 	log cpu profile: $GOV
 }
