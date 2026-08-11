@@ -1,2 +1,0 @@
-# bin
-Scripts i use
