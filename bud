@@ -2,6 +2,8 @@
 #
 # bud - posix sh pywal alternative
 
+CURRENT="$HOME/.cache/current-palette"
+
 newline='
 '
 
@@ -75,11 +77,11 @@ send_sequences() {
         printf '%s\n' "$ansi_13"
         printf '%s\n' "$ansi_14"
         printf '%s\n' "$ansi_15"
-    } | tr -d '#' > ~/.cache/current-palette
+    } | tr -d '#' > $CURRENT
 
-    paleta < ~/.cache/current-palette > ~/.cache/current-palette.tmp && mv ~/.cache/current-palette.tmp ~/.cache/current-palette
+    paleta < $CURRENT > $CURRENT.tmp && mv $CURRENT.tmp $CURRENT
 
-    out "colors: Set terminal colors using 'paleta'"
+    out "colors: Set terminal colors"
 }
 
 set_wallpaper() {
@@ -101,7 +103,7 @@ set_wallpaper() {
 }
 
 main() {
-    [ -z "$1" ] && { printf '%s\n' "Usage: bud <image>"; exit 1; }
+    [ -z "$1" ] && { printf '%s\n' "usage: bud <image.png>"; exit 1; }
 
     wal=$(img "$1")
     if ! type magick >/dev/null 2>&1; then
