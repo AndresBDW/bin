@@ -1,0 +1,119 @@
+#!/bin/sh
+#
+# bud - posix sh pywal alternative
+
+newline='
+'
+
+out() {
+    printf '%s\n' "$1" >&2
+}
+
+img() {
+    [ -d "$1" ] && {
+        set +f
+        set -- "$1/"*
+        [ "$#" -eq 0 ] && { out "error: No images were found, exiting..."; exit 1; }
+        shift "$(shuf -i "1-$#" -n 1 2>/dev/null || awk -v n="$#" 'BEGIN { srand(); print int(rand()*n)+1 }')"
+        wal="$1"
+    }
+    [ -n "$wal" ] || wal="$1"
+    [ -f "$wal" ] || { out "error: File '$wal' not found or inaccessible"; exit 1; }
+    printf '%s\n' "$wal"
+}
+
+send_sequences() {
+    set -- $colors
+    [ -z "$1" ] && set -- "#000000" "#111111" "#222222" "#333333" "#444444" "#555555" "#666666" "#777777" "#888888" "#999999" "#aaaaaa" "#bbbbbb" "#cccccc" "#dddddd" "#eeeeee" "#ffffff"
+
+    c0="$1"; c1="$2"; c2="$3"; c3="$4"; c4="$5"; c5="$6"; c7="$8"; c8="$9"; c9="${10}"; c10="${11}"; c11="${12}"; c12="${13}"; c13="${14}"; c14="${15}"; c15="${16}"
+
+    ansi_0="$c0"
+    ansi_1="$c9"
+    ansi_2="$c10"
+    ansi_3="$c11"
+    ansi_4="$c12"
+    ansi_5="$c13"
+    ansi_6="$c14"
+    ansi_7="$c15"
+    
+    case "${c0#?}" in
+        0*|1*) ansi_8="#666666" ;;
+        2*)    ansi_8="#757575" ;;
+        3*|4*) ansi_8="#999999" ;;
+        5*)    ansi_8="#8a8a8a" ;;
+        6*|7*|8*|9*) ansi_8="#a1a1a1" ;;
+        *)     ansi_8="$c7" ;;
+    esac
+
+    ansi_9="$c9"
+    ansi_10="$c10"
+    ansi_11="$c11"
+    ansi_12="$c12"
+    ansi_13="$c13"
+    ansi_14="$c14"
+    ansi_15="$c15"
+
+    mkdir -p ~/.cache
+    {
+        printf '%s\n' "$c15"
+        printf '%s\n' "$c0"
+        printf '%s\n' "$c15"
+        printf '%s\n' "$ansi_0"
+        printf '%s\n' "$ansi_1"
+        printf '%s\n' "$ansi_2"
+        printf '%s\n' "$ansi_3"
+        printf '%s\n' "$ansi_4"
+        printf '%s\n' "$ansi_5"
+        printf '%s\n' "$ansi_6"
+        printf '%s\n' "$ansi_7"
+        printf '%s\n' "$ansi_8"
+        printf '%s\n' "$ansi_9"
+        printf '%s\n' "$ansi_10"
+        printf '%s\n' "$ansi_11"
+        printf '%s\n' "$ansi_12"
+        printf '%s\n' "$ansi_13"
+        printf '%s\n' "$ansi_14"
+        printf '%s\n' "$ansi_15"
+    } | tr -d '#' > ~/.cache/current-palette
+
+    paleta < ~/.cache/current-palette > ~/.cache/current-palette.tmp && mv ~/.cache/current-palette.tmp ~/.cache/current-palette
+
+    out "colors: Set terminal colors using 'paleta'"
+}
+
+set_wallpaper() {
+    if type feh >/dev/null 2>&1; then
+        feh --bg-fill "$wal"
+    elif type nitrogen >/dev/null; then
+        nitrogen --set-zoom-fill "$wal"
+    elif type bgs >/dev/null; then
+        bgs "$wal"
+    elif type hsetroot >/dev/null; then
+        hsetroot -fill "$wal"
+    elif type habak >/dev/null; then
+        habak -mS "$wal"
+    elif type wbg >/dev/null; then
+        killall wbg
+        wbg -s "$wal" >/dev/null 2>&1 &
+    fi
+    out "wallpaper: Set new wallpaper"
+}
+
+main() {
+    [ -z "$1" ] && { printf '%s\n' "Usage: bud <image>"; exit 1; }
+
+    wal=$(img "$1")
+    if ! type magick >/dev/null 2>&1; then
+        out "error: imagemagick not found, exiting..."
+        exit 1
+    fi
+    
+    colors=$(magick "${wal}" +dither -colors 16 -unique-colors txt:- | grep -E -o " \#.{6}")
+    out "colors: Generated colorscheme"
+
+    send_sequences
+    set_wallpaper
+}
+
+main "$@"
