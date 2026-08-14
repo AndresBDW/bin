@@ -39,19 +39,14 @@ case $TYPE in
             [ "$_m" = 0 ] || _u="${_u}${_m}m "
             log "$PKG" "Build finished in ${_u:-${_s}s}"
         fi
-        case $PKG in
-            kiss) rm -rf "$DEST/usr/bin" ;;
-            *)
-                rm -rf "$DEST/usr/share/doc"
-                rm -rf "$DEST/usr/share/gettext"
-                rm -rf "$DEST/usr/share/man"
-                rm -rf "$DEST/usr/share/locale"
-                rm -rf "$DEST/usr/share/polkit-1"
-                rm -rf "$DEST/usr/share/info"
-                rm -rf "$DEST/usr/share/gtk-doc"
-                rm -rf "$DEST/usr/share/zsh"
-                rm  -f "$DEST/usr/lib/charset.alias"
-            ;;
-        esac
+        rm -rf "$DEST/usr/share/doc"
+        rm -rf "$DEST/usr/share/gettext"
+        rm -rf "$DEST/usr/share/man"
+        rm -rf "$DEST/usr/share/locale"
+        rm -rf "$DEST/usr/share/polkit-1"
+        rm -rf "$DEST/usr/share/info"
+        rm -rf "$DEST/usr/share/gtk-doc"
+        rm -rf "$DEST/usr/share/zsh"
+        rm  -f "$DEST/usr/lib/charset.alias"
     ;;
 esac
