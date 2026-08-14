@@ -1,24 +1,11 @@
 #!/bin/sh
-# kiss hook, adaptado al kiss actual (kisslinux/kiss: corre los
-# hooks como procesos aparte, no los sourcea).
-#
-# Recibe: $1=TYPE $2=PKG $3=DEST-o-ruta-relacionada.
-#
-# LO QUE UN HOOK ACA NO PUEDE HACER (y por qué):
-#   - MAKEFLAGS por paquete: lo que el hook exporte muere con su
-#     propio proceso, nunca llega al build real.
-#   - Activar tmpfs por paquete: mak_dir/pkg_dir los fija kiss una
-#     sola vez al arrancar (create_tmp_dirs), antes de que corra
-#     ningún hook. No hay forma de cambiarlos por paquete desde acá.
-# Para ambas cosas, la solución real es la función de shell "kb"
-# que te dejo abajo del hook, comentada, que decide esto ANTES de
-# invocar kiss (no desde adentro).
 
 TYPE=$1
 PKG=$2
 DEST=$3
 
-# Colores iguales a los de kiss (mismo criterio: KISS_COLOR y tty).
+_current_pkg_file="/tmp/kiss-current-pkg"
+
 if [ "${KISS_COLOR:-1}" != 0 ] && [ -t 2 ]; then
     c1='\033[1;33m'
     c2='\033[1;34m'
@@ -35,6 +22,7 @@ _timefile=${KISS_TMPDIR:-/tmp}/_kh_start-$PKG
 case $TYPE in
     pre-build)
         cat /proc/uptime > "$_timefile" 2>/dev/null
+        printf '%s\n' "$PKG" > "$_current_pkg_file"
 
         case $PKG in
             mesa)
@@ -48,6 +36,8 @@ case $TYPE in
     ;;
 
     post-build)
+        rm -f "$_current_pkg_file"
+
         if [ -f "$_timefile" ]; then
             IFS=. read -r _start _ < "$_timefile"
             IFS=. read -r _end _ < /proc/uptime
@@ -80,17 +70,3 @@ case $TYPE in
         esac
     ;;
 esac
-
-# --- MAKEFLAGS y tmpfs por paquete: hacelo así, no desde el hook ---
-# Poné esto en tu .profile (o donde tengas tu shell rc):
-#
-#   kb() {
-#       case $1 in
-#           llvm|clang|rust|rustc|gcc)
-#               MAKEFLAGS=-j6 kiss b "$@" ;;
-#           *)
-#               KISS_TMPDIR=/tmp/kiss-tmp kiss b "$@" ;;
-#       esac
-#   }
-#
-# y usás "kb pfetch" o "kb llvm" en vez de "kiss b ...".
