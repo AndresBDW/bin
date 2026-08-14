@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ "$1" = --mangohud ]; then
-	conty.sh mangohud wine ~/.local/share/juegos/gtasa/Normal.bat
+	conty.sh mangohud wine ~/.local/share/wine/gtasa/Normal.bat
 else
-	conty.sh wine ~/.local/share/juegos/gtasa/Normal.bat
+	conty.sh wine ~/.local/share/wine/gtasa/Normal.bat
 fi

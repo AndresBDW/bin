@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ "$1" = --mangohud ]; then
-	conty.sh mangohud wine ~/.local/share/juegos/minecraft/BetaPlusPlus.exe
+	conty.sh mangohud wine ~/.local/share/wine/minecraft/BetaPlusPlus.exe
 else
-	conty.sh wine ~/.local/share/juegos/minecraft/BetaPlusPlus.exe
+	conty.sh wine ~/.local/share/wine/minecraft/BetaPlusPlus.exe
 fi
