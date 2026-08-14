@@ -1,7 +1,0 @@
-#!/bin/sh
-
-if [ "$1" = --mangohud ]; then
-	conty.sh mangohud wine ~/.local/share/wine/mpgl/MPGL.exe
-else
-	conty.sh wine ~/.local/share/wine/mpgl/MPGL.exe
-fi
