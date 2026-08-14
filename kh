@@ -26,11 +26,11 @@ case $TYPE in
 
         case $PKG in
             mesa)
-                _flags=-Dgallium-drivers=radeonsi
-                _flags=$_flags\ -Dvulkan-drivers=amd
-                _flags=$_flags\ -Dvideo-codecs=all
-
-                sed -i "s/\. output/$_flags \0/" .build
+                _buildfile=$(kiss search mesa | head -1)/build
+                _flags="-Dgallium-drivers=radeonsi"
+                _flags="$_flags -Dvulkan-drivers=amd"
+                _flags="$_flags -Dvideo-codecs=all"
+                sed -i "s|\. output|$_flags \. output|" "$_buildfile"
             ;;
         esac
     ;;
