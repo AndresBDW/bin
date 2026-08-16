@@ -1,9 +1,0 @@
-#!/bin/sh -e
-
-trap 'printf \\033[?25h' EXIT INT
-
-printf '\033[?25l'
-
-while printf '\033[KBAR!!!!\r'; do
-    sleep 3
-done
