@@ -20,7 +20,7 @@ img() {
         wal="$1"
     }
     [ -n "$wal" ] || wal="$1"
-    [ -f "$wal" ] || { out "error: File '$wal' not found or inaccessible"; exit 1; }
+    [ -f "$wal" ] || { out "error: file '$wal' not found or inaccessible"; exit 1; }
     printf '%s\n' "$wal"
 }
 
@@ -79,9 +79,8 @@ send_sequences() {
         printf '%s\n' "$ansi_15"
     } | tr -d '#' > $CURRENT
 
-    paleta < $CURRENT > $CURRENT.tmp && mv $CURRENT.tmp $CURRENT
-
-    out "colors: Set terminal colors"
+    paleta < "$CURRENT" > "$CURRENT.tmp" 2>/dev/null || paleta_error; mv "$CURRENT.tmp" "$CURRENT"
+	out "colors: set terminal colors"
 }
 
 set_wallpaper() {
@@ -99,11 +98,31 @@ set_wallpaper() {
         killall wbg
         wbg -s "$wal" >/dev/null 2>&1 &
     fi
-    out "wallpaper: Set new wallpaper"
+    out "wallpaper: set new wallpaper"
+}
+
+magick_check() {
+	pallines=$(printf "$colors" | wc -l)
+	
+	out "palette: palette lines '$pallines'"
+
+	if [ "$pallines" -lt "8" ]; then
+		magick_error
+	fi
+}
+
+magick_error() {
+	out "error: magick couldnt generate a palette, exiting..."
+	exit 1
+}
+
+paleta_error() {
+	out "error: paleta couldnt apply the palette, exiting..."
+	exit 1
 }
 
 main() {
-    [ -z "$1" ] && { printf '%s\n' "usage: bud <image.png>"; exit 1; }
+    [ -z "$1" ] && { printf '%s\n' "usage: bud <image.png/directory>"; exit 1; }
 
     wal=$(img "$1")
     if ! type magick >/dev/null 2>&1; then
@@ -111,8 +130,13 @@ main() {
         exit 1
     fi
     
+	out "colors: using wallpaper '"$wal"'"
+
     colors=$(magick "${wal}" +dither -colors 16 -unique-colors txt:- | grep -E -o " \#.{6}")
-    out "colors: Generated colorscheme"
+
+	magick_check
+
+    out "colors: generated colorscheme"
 
     send_sequences
     set_wallpaper
